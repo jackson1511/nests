@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0 # Using MySQL 8.0 version
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # The root password for MySQL
+      MYSQL_DATABASE: nestjs_db # Database name to be created
+      MYSQL_USER: user # MySQL user
+      MYSQL_PASSWORD: userpassword # Password for the MySQL user
+    ports:
+      - '3306:3306' # Expose MySQL on port 3306
+    volumes:
+      - mysql_data:/var/lib/mysql # Persist data to a named volume
+    networks:
+      - mysql_network
+
+volumes:
+  mysql_data:
+
+networks:
+  mysql_network:
+    driver: bridge
