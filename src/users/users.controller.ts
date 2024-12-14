@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Paginate, PaginateQuery } from 'nestjs-paginate';
+import { query } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -13,8 +15,8 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Paginate() query: PaginateQuery) {
+    return this.usersService.findAll(query);
   }
 
   @Get(':id')

@@ -2,6 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './entities/user.repository';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -18,8 +20,11 @@ export class UsersService {
     return user;
   }
 
-  async findAll() {
-    return await this.userRepository.find({});
+  async findAll(query: PaginateQuery): Promise<Paginated<User>> {
+    return paginate(query, this.userRepository,{
+      sortableColumns: ['firstname', 'firstname'],
+      searchableColumns: ['firstname', 'lastname']
+    })
   }
 
   async findOne(id: string) {
