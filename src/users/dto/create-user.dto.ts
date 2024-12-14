@@ -10,4 +10,12 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsString()
     readonly lastname: string
+
+    @IsNotEmpty()
+    @IsString()
+    readonly email: string
+
+    @IsNotEmpty()
+    @IsString()
+    readonly password: string
 }

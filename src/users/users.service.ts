@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRepository } from './entities/user.repository';
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -11,13 +12,34 @@ export class UsersService {
   constructor(private readonly userRepository: UserRepository){}
 
   async create(createUserDto: CreateUserDto) {
-    const userEntity = this.userRepository.create(createUserDto);
-    const user = await this.userRepository.save(userEntity);
+    try {
+      const userEntity = this.userRepository.create(createUserDto);
+
+    const passwordHash = await bcrypt.hash(createUserDto.password,10);
+
+    if(!passwordHash){
+      throw new BadRequestException("password hashed faild.")
+    }
+
+    // userEntity.password = passwordHash; 
+
+    const user = await this.userRepository.save({
+      ...userEntity,
+      password: passwordHash
+    });
 
     if(!user){
       throw new BadRequestException("failed to create user!")
     }
     return user;
+    } catch (error) {
+      if(error instanceof BadRequestException)
+      {
+        throw error;
+      }
+
+      throw new BadRequestException(error);
+    }
   }
 
   async findAll(query: PaginateQuery): Promise<Paginated<User>> {
@@ -33,6 +55,11 @@ export class UsersService {
       throw new NotFoundException(`user not found with ID: ${id}`)
     }
     return user;
+  }
+
+  /** findByEmail */
+  async findOneByEmail(email: string){
+    return await this.userRepository.findOne({where: {email}});
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -61,5 +88,14 @@ export class UsersService {
       throw new BadRequestException("delete user failed.")
     }
     return `user deleted`;
+  }
+
+  // compare hash password 
+  async compareHash(text: string, hash: string){
+    try {
+      return await bcrypt.compare(text,hash)
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }
