@@ -1,17 +1,5 @@
 import { IsNotEmpty, IsString } from "class-validator";
+import { CreateUserDto } from "src/users/dto/create-user.dto";
 
 
-export class RegisterDto{
-
-    @IsNotEmpty()
-    @IsString()
-    readonly email: string
-
-    @IsNotEmpty()
-    @IsString()
-    readonly password: string
-
-    readonly firstname: string
-
-    readonly lastname: string
-}
+export class RegisterDto extends CreateUserDto{}

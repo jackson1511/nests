@@ -44,6 +44,32 @@ export class AuthService {
     }
 
     async register(registerDto: RegisterDto){
-        return null;
+
+        const userExist = await this.userService.findOneByEmail(registerDto.email);
+
+        if(userExist){
+            throw new BadRequestException("User already exist")
+        }
+
+        const newUser = await this.userService.create(registerDto);
+
+        if(!newUser){
+            throw new BadRequestException("register failed.")
+        }
+
+        // generate token 
+        const token = await this.jwtService.signAsync({
+            userId: newUser.id
+        })
+
+        if(!token){
+            throw new BadRequestException("Invalid email or password")
+        }
+
+        return {
+            "user": newUser,
+            "access_token": token,
+            "token_type": "bearer"
+        };
     }
 }
