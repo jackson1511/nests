@@ -1,4 +1,5 @@
 import {  IsNotEmpty, IsString } from "class-validator";
+import { Role } from "../entities/role.enum";
 
 export class CreateUserDto {
 
@@ -18,4 +19,5 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsString()
     readonly password: string
+
 }

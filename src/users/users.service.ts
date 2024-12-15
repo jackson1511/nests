@@ -83,7 +83,7 @@ export class UsersService {
     if(!user){
       throw new NotFoundException(`user not found with ID: ${id}`)
     }
-    const userDelete = this.userRepository.delete(user);
+    const userDelete = this.userRepository.delete(id);
     if(!userDelete){
       throw new BadRequestException("delete user failed.")
     }
